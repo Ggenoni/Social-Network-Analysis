@@ -39,6 +39,11 @@ if (is_symmetric) {
 ```
 
 ```{r}
+# Convert the adjacency matrix to an igraph object
+g <- graph_from_adjacency_matrix(social_net, mode = "undirected", diag = FALSE)
+```
+
+```{r}
 #Check if the graph is connected
 connected <- is_connected(g)
 cat("Is the graph connected? :", connected)
@@ -84,11 +89,6 @@ gplot(
 
 
 3. Part 3
-
-```{r}
-# Convert the adjacency matrix to an igraph object
-g <- graph_from_adjacency_matrix(social_net, mode = "undirected", diag = FALSE)
-```
 
 ```{r}
 # Degree centrality
