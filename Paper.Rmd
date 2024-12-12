@@ -6,7 +6,7 @@ output: html_notebook
 ### Assignment 1
 ## Nodal level analysis
 
-#By Marco Distasio, Alessandra Gandini, Gaudenzia Genoni, Yishak Tadele Nigatu
+#By Marco Di Stasio, Alessandra Gandini, Gaudenzia Genoni, Yishak Tadele Nigatu
 
 
 Introduction
