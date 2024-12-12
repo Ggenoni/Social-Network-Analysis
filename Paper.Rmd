@@ -70,9 +70,10 @@ node_colors <- ifelse(attributes$Type == 1, "orange", "blue")
 ```{r}
 gplot(
   social_net,
-  vertex.col = node_colors, # Use the color vector for nodes
-  edge.col = "gray",        # Optional: Set edge color
-  label.cex = 0.7           # Adjust label size
+  gmode = "graph",
+  vertex.col = node_colors, 
+  edge.col = "gray",        
+  label.cex = 0.7          
 )
 ```
 
@@ -132,6 +133,7 @@ cat("The type of this node is:", node_type, "\n")
 
 
 ```{r}
+##Optional!!!
 # Set default node size and color
 node_sizes <- rep(5, vcount(g)) # Default size
 node_colors <- ifelse(Borgatti_Scientists504$Attributes$Type == 1, "orange", "blue") # Existing colors
