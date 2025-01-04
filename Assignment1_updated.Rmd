@@ -1,0 +1,156 @@
+---
+title: "Assignment 1"
+output: pdf_document
+---
+
+# Nodal level analysis
+
+### By Marco Di Stasio, Alessandra Gandini, Gaudenzia Genoni, Yishak Tadele Nigatu
+
+
+#### Introduction  
+This analysis focuses on the Borgatti_Scientists504 dataset, examining collaboration patterns through an undirected network where nodes represent individual scientists, and edges indicate collaborative relationships. Specifically, the structural positions of scientists from three fields — Management Sciences, Economics, and Behavioral Sciences — are compared to those from other disciplines to assess potential differences in their collaboration approaches. To achieve this, two measures of network centrality are calculated to evaluate positional importance, and their relationship with the disciplinary attribute (coded as 1 for Management, Economics, and Behavioral Sciences, and 0 otherwise) is investigated.
+
+#### Part 1  
+<br/>
+
+```{r setup, message=FALSE, warning=FALSE}
+#importing the libraries
+library(sna)
+library(igraph)
+```
+
+```{r}
+#loading the dataset
+load("Borgatti_Scientists504.RDA")
+attributes <- Borgatti_Scientists504$Attributes
+```
+  
+  
+After importing the necessary libraries and loading the dataset, a specific cutoff (>2) is used to create a binary variable indicating whether a scientist has more than two collaborations (1) or not (0).
+
+```{r}
+social_net <- ifelse(Borgatti_Scientists504$Collaboration > 2, 1, 0)
+```
+
+
+```{r}
+#converting the adjacency matrix to an igraph object
+g <- graph_from_adjacency_matrix(social_net, mode = "undirected", diag = FALSE)
+```
+
+
+Another important pre-processing step is creating a binary classification based on a specific nodal attribute. In this case, scientists belonging to departments 1, 2, or 5 (corresponding to Behavioral Sciences, Economics, and Management Sciences, respectively) were assigned a value of 1, while others (including NAs) were assigned a value of 0 in the new Type column.
+
+
+```{r}
+attributes$Type <- ifelse(attributes$DeptID %in% c(1, 2, 5), 1, 0)
+```
+
+The network is visualized as an initial exploratory step using gplot() from the sna package. The default graph layout is applied to visualize the network structure. The resulting graph suggests a polarization into two macro-groups; however, further analysis is required to draw more specific conclusions.
+
+```{r hidden_chunk, include=FALSE}
+par(mar=c(0,0,0,0))
+```
+
+```{r}
+gplot(social_net, gmode = "graph")
+```
+
+
+#### Part 2
+
+A clearer visualization of the graph is achieved by color-coding the groups of scientists based on the previous categorization. Specifically, scientists from the departments of Behavioral Sciences, Economics, and Management Sciences are colored orange, while those from other departments are colored blue. The edges connecting the nodes are colored gray. 
+
+```{r}
+node_colors <- ifelse(attributes$Type == 1, "orange", "blue")
+```
+
+```{r}
+gplot(
+  social_net,
+  gmode = "graph",
+  vertex.col = node_colors, 
+  edge.col = "gray",        
+  label.cex = 0.7          
+)
+```
+Interestingly, a clustering of the network can be observed, with orange nodes collaborating more intensively among themselves and blue nodes preferentially connecting with their peers. This observation suggests, at least upon initial inspection, a degree of homophily in the graph, with scientists from the same department tending to cluster together. It will be interesting to see what new insights can be gained from analyzing the measures of position.
+
+
+#### Part 3
+
+The two chosen measures of position are degree centrality and closeness centrality. 
+
+- Degree centrality measures the number of direct connections a node has. In general, nodes with higher degrees are considered more prominent and are often viewed as more significant by other members of the network. When assuming that information flows along ties, degree centrality can be interpreted as an indicator of a node's level of exposure within the network (see Borgatti, Everett, Johnson, & Agneessens, 2022, p. 172).
+
+- Closeness centrality is the sum of geodesic distances from a node to all other nodes in the network. In this case, the normalized version of closeness centrality is used, which involves scaling the values so that the maximum centrality is 1 and higher scores indicate greater centrality. In the context of information flow, closeness centrality can be interpreted as the minimum time required for something to reach a given node. A node with a high normalized closeness score is close to most other nodes, meaning that information originating from a random node can reach it more quickly. Additionally, since diffusion processes often introduce distortion, central nodes tend to receive more reliable information. Thus, a high normalized closeness centrality can be seen as an advantage, as it implies faster access to information with less distortion (see Borgatti, Everett, Johnson, & Agneessens, 2022, p. 179).
+
+
+
+```{r}
+# Degree centrality
+degree_centrality <- degree(g, mode = "all")
+```
+
+
+```{r}
+# Closeness centrality
+closeness_centrality <- closeness(g, normalized = T)
+```
+
+
+A further step in the analysis is to fins the node(s) with the highest value for the respective measures of position.
+
+```{r}
+top_degree_index <- which.max(degree_centrality)
+
+max_node_name <- V(g)$name[top_degree_index]
+
+max_node_info <- subset(attributes, NodeName == max_node_name)
+
+node_type <- max_node_info$Type
+
+```
+The node with the highest degree centrality, labeled N1514, has a degree centrality value of 70 (meaning it has 70 direct ties to other nodes). It belongs to one of the three departments examined (Behavioral Sciences, Economics, or Management Sciences).
+
+```{r}
+top_closeness_index  <- which.max(closeness_centrality)
+
+max_node_name <- V(g)$name[top_closeness_index]
+
+max_node_info <- subset(attributes, NodeName == max_node_name)
+
+node_type <- max_node_info$Type
+```
+The node with the highest closeness centrality, labeled T0266, has a closeness centrality value of approximately 0.44. This value indicates that T0266 is relatively close to all other nodes in the network, meaning it can reach other nodes more quickly and efficiently than most other nodes. T0266 is therefore well-positioned to disseminate information or resources across the network, and it does not belong to the three departments taken in consideration.
+
+
+#### Part 4
+
+```{r}
+cor.test(degree_centrality, closeness_centrality)
+```
+
+
+5.Part 5
+
+```{r}
+#cor.test(degree_centrality, attributes$Type)
+```
+
+```{r}
+#cor.test(closeness_centrality, attributes$Type)
+```
+
+#### Conclusion
+
+
+
+#### Bibliography  
+  
+Borgatti, S. P., Everett, M. G., Johnson, J. C., & Agneessens, F. (2022). Analyzing social networks using R. SAGE Publications.
+
+
+
+
