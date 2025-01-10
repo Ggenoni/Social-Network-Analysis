@@ -26,9 +26,14 @@ plot(EIES_T2F_n)
 gplot(EIES_T2F_n, gmode="graph", displaylabels=T, vertex.col=EIES_T2F_n %v% "Gender"*2)
 ```
 
-###Part 1
+###Part 1  
 
-#Model 1
+The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2. The directed and valued network was dichotomized to focus on strong ties, with values of 3 (friend) and 4 (close personal friend) retained as 1, and all others set to 0. The dichotomized data was transformed into a network object, and gender attributes were assigned to nodes based on our external dataset.  
+
+In the following step, three ERGM models are run, each time controlling for different effects. **Model 1** focuses on purely structural properties, including terms for edges, mutual ties, geometrically weighted in-degree and out-degree distributions, and two-path dependencies (outgoing and incoming). **Model 2** examines dyadic independent effects by incorporating individual and dyadic attributes, specifically gender as a nodal covariate for both in-degree and out-degree, as well as gender homophily through nodal matching. **Model 3** combines structural and attribute-based effects, integrating the terms from both Models 1 and 2 to provide a comprehensive analysis of the network.
+
+
+#####Model 1
 
 ```{r}
 EIES_Model1<-ergm(EIES_T2F_n ~ edges+mutual
@@ -41,7 +46,7 @@ EIES_Model1<-ergm(EIES_T2F_n ~ edges+mutual
 summary(EIES_Model1)
 ```
 
-#Part 2
+####Model 2
 
 ```{r}
 EIES_Model2<-ergm(EIES_T2F_n ~ edges+mutual
@@ -52,7 +57,7 @@ EIES_Model2<-ergm(EIES_T2F_n ~ edges+mutual
 summary(EIES_Model2)
 ```
 
-#Part 3
+####Model 3
 
 ```{r}
 EIES_Model3<-ergm(EIES_T2F_n ~ edges+mutual
@@ -66,17 +71,59 @@ EIES_Model3<-ergm(EIES_T2F_n ~ edges+mutual
 summary(EIES_Model3)
 ```
 
-#Present the results in a table
+The results are presented in the following table:
+
+| Effect             | Model 1 Estimate (SE) | Model 1 Significance | Model 2 Estimate (SE) | Model 2 Significance | Model 3 Estimate (SE) | Model 3 Significance |
+|--------------------|-----------------------|----------------------|-----------------------|----------------------|-----------------------|----------------------|
+| edges              | -4.825 (0.363)       | ***                  | -2.941 (0.185)       | ***                  | -5.562 (0.446)       | ***                  |
+| mutual             | 2.603 (0.344)        | ***                  | 2.486 (0.291)        | ***                  | 2.678 (0.360)        | ***                  |
+| gwideg.fixed       | 2.195 (1.135)        | .                    | NA                   | NA                   | 1.641 (1.164)        |                     |
+| gwodeg.fixed       | 4.377 (2.792)        |                      | NA                   | NA                   | 16.286 (7.005)       | *                    |
+| gwesp.OTP.fixed    | 1.967 (0.218)        | ***                  | NA                   | NA                   | 1.853 (0.223)        | ***                  |
+| gwesp.ITP.fixed    | -0.627 (0.110)       | ***                  | NA                   | NA                   | -0.637 (0.118)       | ***                  |
+| nodeicov.Gender    | NA                   | NA                   | 0.053 (0.217)        |                      | 0.005 (0.189)        |                      |
+| nodeocov.Gender    | NA                   | NA                   | 1.274 (0.210)        | ***                  | 1.236 (0.309)        | ***                  |
+| nodematch.Gender   | NA                   | NA                   | -0.027 (0.162)       |                      | -0.071 (0.161)       |                      |
 
 ###Part 2
 
+As can be seen from the table, the only effects that vary from Model 1 to Model 3 are gwideg.fixed (which decreases slightly and loses its marginal significance in Model 3) and gwodeg.fixed (which is not significant in Model 1 but becomes statistically significant in Model 3). With respect to significance, no effect changes from Model 2 to Model 3.
+
+- For *gwideg.fixed*, the marginally significant positive coefficient in Model 1 (β=2.195,p=0.053) suggests that individuals who receive many ties (are "popular") have a slightly increased likelihood of forming additional friendships. When gender attributes are introduced in Model 3, the previously observed in-degree popularity effect is partly explained by other structural or gender-related factors. This suggests that "popularity" in terms of receiving ties is less crucial in explaining tie formation when accounting for sender gender and other structural dynamics. Friendship in this network may not be strongly driven by central hubs but instead distributed across more reciprocal or cohesive relationships.
+
+- For *gwodeg.fixed*, the non-significant coefficient in Model 1 (β=4.372,p=0.117) indicates that individuals who send many ties ("outgoing activity") do not significantly influence the overall network structure at this stage. However, when gender attributes are introduced in Model 3, individuals who actively initiate multiple friendships (high out-degree) appear to play an important role in shaping the network, especially when considering the sender's gender. This could reflect that certain individuals are more proactive in initiating friendships, and their role becomes more evident when both structural and gender-related effects are accounted for.
+
+Let us now focus particularly on the parameters of **Model 3**.
+As already mentioned, Model 3 integrates structural and attribute-based effects to explain the formation of ties in the friendship network. Five effects are significant (edges, mutual, gwodeg.fixed, gwesp.OTP.fixed, and gwesp.ITP.fixed), while the remaining three (gwideg.fixed, nodeicov.Gender, and nodematch.Gender) are not. 
+Among the significant effects:
+- *edges* has a negative coefficient that reflects the overall sparsity of the network and is consistent with the selective nature of friendships, where not all individuals form ties with one another (therefore, the baseline probability of forming a tie between any two nodes is low).
+- *mutual* has a positive coefficient that indicates a strong tendency for reciprocity in friendship ties. In this network, individuals who send a friendship tie to someone are more likely to receive one in return.
+- *gwodeg.fixed* has a large and positive coefficient indicating that individuals who actively initiate multiple ties (high out-degree)  are instrumental in fostering connectivity, likely creating opportunities for others to become integrated into the friendship network.
+- *gwesp.OTP.fixed* has a positive coefficient which reflects a tendency for cohesive subgroups to form, where a node’s friends are likely to extend ties outward to additional nodes. In friendship networks, this effect corresponds to the clustering of friendships and the formation of tightly-knit groups.
+- *gwesp.ITP.fixed* has a negative coefficient that indicates an aversion to hierarchical structures where ties converge inward. This is consistent with friendship networks, where relationships are more egalitarian, and dominance or hierarchy is less emphasized compared to other types of networks.
+- *nodeocov.Gender* has a positive coefficient suggesting that gender plays an important role in initiating ties, with females (coded as 1) being more likely to send friendship ties than males. This result may indicate that females in this network are more proactive in forming friendships.
+Among the non-significant effects:
+- *gwideg.fixed* has a positive coefficient which suggests that individuals who receive many friendship ties (popular individuals) may have a slight tendency to attract additional ties, but this effect is not strong enough to reach statistical significance.
+- *nodeicov.Gender* has a near-zero estimate indicating that the gender of the individual receiving a tie does not substantially influence the likelihood of tie formation. This suggests that friendships in this network are not biased by the gender of the recipient.
+- *nodematch.Gender* indicates no strong tendency for individuals to form ties with others of the same gender. In this network, friendships appear to be based on factors other than gender similarity.
+
+In conclusion, the significant effects in Model 3 emphasize the importance of reciprocity, proactive tie initiation, and cohesive subgroup formation as key drivers of the network's structure, while the network resists hierarchical patterns. Gender does play a role in initiating ties; however, other gender-related effects, such as homophily and the gender of the recipient, are not significant. 
+
+
 ###Part 3
+
+When performing an ERGM analysis, it is of crucial importance to examine the goodness of fit, as it evaluates how well the model captures the observed network's structure and relational patterns. Here, goodness-of-fit (GOF) diagnostics were performed by setting a random seed to ensure reproducibility across runs. Subsequently, 2000 networks were simulated for comparison with the observed network, using the same seed for consistency.
+The GOF was calculated for the three models, comparing observed network statistics with those simulated from the model. The diagnostics include:
+- *model*: it evaluates how well the model itself fits the data.
+- *idegree and odegree*: it assesses the in-degree and out-degree distributions.
+- *distance*: it examines the geodesic distance distribution (shortest path lengths between nodes).
+- *triadcensus*: it evaluates the distribution of triadic configurations in the network.
+These additional metrics (degree distributions, distance, and triadic configurations) are used to complement the evaluation of the model fit. While the model statistic assesses overall fit, the additional metrics help pinpoint specific network features the model may under- or overestimate.
 
 ```{r}
 set.seed(565)
 gof.choices<-control.gof.ergm(nsim=2000, seed = 565)
 ```
-
 
 ```{r}
 #Model 1
@@ -84,6 +131,8 @@ EIES_Model1sim2000<-gof(EIES_Model1,
                         GOF=~model+idegree+odegree+distance+triadcensus, control=gof.choices)
 EIES_Model1sim2000$summary.model
 ```
+Overall, the goodness-of-fit diagnostics for Model 1 indicate that the observed network statistics align closely with the simulated values across all metrics. This suggests that Model 1 provides an adequate fit for capturing the structural properties of the observed network.
+
 
 ```{r}
 #Model 2
@@ -91,7 +140,7 @@ EIES_Model2sim2000<-gof(EIES_Model2,
                         GOF=~model+idegree+odegree+distance+triadcensus, control=gof.choices)
 EIES_Model2sim2000$summary.model
 ```
-
+The goodness-of-fit diagnostics for Model 2 demonstrate that the observed network statistics are well-replicated by the simulated networks, too.
 
 ```{r}
 #Model 3
@@ -99,6 +148,9 @@ EIES_Model3sim2000<-gof(EIES_Model3,
                         GOF=~model+idegree+odegree+distance+triadcensus, control=gof.choices)
 EIES_Model3sim2000$summary.model
 ```
+
+The goodness-of-fit diagnostics for Model 3 indicate a strong alignment between the observed network statistics and the simulated values, as reflected by high MC p-values across all metrics. Structural effects, such as edges, mutual ties, and measures of triadic closure (gwesp.OTP.fixed.0.5 and gwesp.ITP.fixed.0.5), are well-captured by the model, showing minimal discrepancies between observed and simulated values. Additionally, gender-related covariates, including nodeicov.Gender, nodeocov.Gender, and nodematch.Gender, are also accurately represented, suggesting that the model effectively incorporates both structural and attribute-based dynamics. This demonstrates that Model 3 provides a robust and comprehensive fit to the observed friendship network.  
+These findings are shown in the histograms below.
 
 ```{r}
 hist(EIES_Model3sim2000$sim.model[,1]+.01, nclass=20, main = paste("Histogram of edges"), probability = T, xlab = NA)
@@ -158,6 +210,7 @@ abline(v = EIES_Model3sim2000$summary.model[9,1], col = "red", lwd = 3)
 abline(v = EIES_Model3sim2000$summary.model[9,3], col = "blue", lwd = 3, lty=2)
 ```
 
+The *trace plots* showed below are visual diagnostics used to assess the convergence of the Markov Chain Monte Carlo (MCMC) algorithm in Model 3. They display the sampled values of parameters over iterations, allowing for the identification of issues such as non-convergence or autocorrelation. A well-mixed and stable trace plot indicates that the MCMC has converged, ensuring reliable parameter estimates for the ERGM.
 
 ```{r}
 plot(EIES_Model3sim2000$sim.model[,1], type="l", main = paste("Trace plot for edges"), ylab="", xlab="")
@@ -200,9 +253,20 @@ plot(EIES_Model3sim2000$sim.model[,8], type="l", main = paste("Trace plot for no
 plot(EIES_Model3sim2000$sim.model[,9], type="l", main = paste("Trace plot for nodematch.Gender "), ylab="", xlab="")
 ```
 
+Finally, the evaluation of the model fit is completed with the analysis of additional metrics, along with a re-presentation of the GOF for model statistics (which was already discussed above).
 
 ```{r}
 EIES_Model3sim2000
+```
+
+The goodness-of-fit diagnostics for the additional metrics in Model 3 reveal varying levels of alignment between the observed and simulated network statistics, as detailed below for each of them.
+- **Goodness-of-fit for in-degree**: the model captures the overall in-degree distribution reasonably well for most categories, as indicated by high MC p-values (e.g., idegree6 p=0.926, idegree7 p=1.000, and idegree10 p=1.000). However, there are notable deviations for specific categories. For example, idegree1 (p=0.207) is underestimated, as the observed frequency (3) is higher than the mean prediction (1.1410). Conversely, idegree5 (p=0.169) is overestimated, with the predicted mean (3.8815) exceeding the observed value (1). Additionally, idegree24 shows a complete mismatch (p=0.000), indicating the model fails to replicate extreme high in-degree values, likely due to their rarity in the network.
+- **Goodness-of-fit for out-degree**: 
+- **Goodness-of-fit for minimum geodesic distance**: 
+- **Goodness-of-fit for triad census**: 
+
+
+```{r}
 plot(EIES_Model3sim2000)
 ```
 
@@ -217,7 +281,7 @@ for (k in 1:16)
 EIES_Model3sim2000$obs.triadcensus
 ```
 
-
+In conclusion, the model is satisfactory in capturing the overall structure and many relational patterns of the network, particularly those related to reciprocity, clustering, and the influence of gender attributes. However, its limitations in handling extreme degree values, specific triadic structures, and longer paths suggest that additional effects may need to be included to improve the model's fit. These could include effects related to preferential attachment, node-specific roles, or alternative triadic configurations, which might better capture the underlying processes driving tie formation in the network.
 
 
 
