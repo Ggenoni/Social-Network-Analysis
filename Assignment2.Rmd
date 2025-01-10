@@ -5,6 +5,10 @@ date: "2024-12-30"
 output: pdf_document
 ---
 
+#Introduction  
+
+This study applies ERGM analysis to a directed, valued friendship network of 32 network scientists, derived from the Electronic Information Exchange System (EIES) dataset. After dichotomizing the network, three models were estimated: (1) a purely structural model, capturing key network-level features such as reciprocity, degree distribution, and triadic structures; (2) a dyadic-independent model incorporating gender attributes to assess individual-level effects; and (3) a combined model integrating both structural and attribute-based effects. The coefficients of the models are interpreted, with a substantial focus on Model 3, followed by goodness-of-fit diagnostics to evaluate how well each model replicates the observed network structure and relational patterns. The combined model, which includes structural features and gender-related effects, provides the most comprehensive representation of the network. However, discrepancies in extreme degree values, certain triadic configurations, and long-range connectivity suggest room for refinement to account for additional effects.
+
 ```{r}
 library(sna)
 library(ergm)
