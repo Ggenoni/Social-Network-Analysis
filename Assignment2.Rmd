@@ -5,7 +5,11 @@ date: "2024-12-30"
 output: pdf_document
 ---
 
-#Introduction  
+# Exponential Random Graph Model
+
+### By Marco Di Stasio, Alessandra Gandini, Gaudenzia Genoni, Yishak Tadele Nigatu
+
+#### Introduction  
 
 This study applies ERGM analysis to a directed, valued friendship network of 32 network scientists, derived from the Electronic Information Exchange System (EIES) dataset. After dichotomizing the network, three models were estimated: (1) a purely structural model, capturing key network-level features such as reciprocity, degree distribution, and triadic structures; (2) a dyadic-independent model incorporating gender attributes to assess individual-level effects; and (3) a combined model integrating both structural and attribute-based effects. The coefficients of the models are interpreted, with a substantial focus on Model 3, followed by goodness-of-fit diagnostics to evaluate how well each model replicates the observed network structure and relational patterns. The combined model, which includes structural features and gender-related effects, provides the most comprehensive representation of the network. However, discrepancies in extreme degree values, certain triadic configurations, and long-range connectivity suggest room for refinement to account for additional effects.
 
@@ -30,14 +34,14 @@ plot(EIES_T2F_n)
 gplot(EIES_T2F_n, gmode="graph", displaylabels=T, vertex.col=EIES_T2F_n %v% "Gender"*2)
 ```
 
-###Part 1  
+#### Part 1  
 
 The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2. The directed and valued network was dichotomized to focus on strong ties, with values of 3 (friend) and 4 (close personal friend) retained as 1, and all others set to 0. The dichotomized data was transformed into a network object, and gender attributes were assigned to nodes based on our external dataset.  
 
 In the following step, three ERGM models are run, each time controlling for different effects. **Model 1** focuses on purely structural properties, including terms for edges, mutual ties, geometrically weighted in-degree and out-degree distributions, and two-path dependencies (outgoing and incoming). **Model 2** examines dyadic independent effects by incorporating individual and dyadic attributes, specifically gender as a nodal covariate for both in-degree and out-degree, as well as gender homophily through nodal matching. **Model 3** combines structural and attribute-based effects, integrating the terms from both Models 1 and 2 to provide a comprehensive analysis of the network.
 
 
-#####Model 1
+##### Model 1
 
 ```{r}
 EIES_Model1<-ergm(EIES_T2F_n ~ edges+mutual
@@ -50,7 +54,7 @@ EIES_Model1<-ergm(EIES_T2F_n ~ edges+mutual
 summary(EIES_Model1)
 ```
 
-####Model 2
+##### Model 2
 
 ```{r}
 EIES_Model2<-ergm(EIES_T2F_n ~ edges+mutual
@@ -61,7 +65,7 @@ EIES_Model2<-ergm(EIES_T2F_n ~ edges+mutual
 summary(EIES_Model2)
 ```
 
-####Model 3
+##### Model 3
 
 ```{r}
 EIES_Model3<-ergm(EIES_T2F_n ~ edges+mutual
@@ -89,7 +93,7 @@ The results are presented in the following table:
 | nodeocov.Gender    | NA                   | NA                   | 1.274 (0.210)        | ***                  | 1.236 (0.309)        | ***                  |
 | nodematch.Gender   | NA                   | NA                   | -0.027 (0.162)       |                      | -0.071 (0.161)       |                      |
 
-###Part 2
+#### Part 2
 
 As can be seen from the table, the only effects that vary from Model 1 to Model 3 are gwideg.fixed (which decreases slightly and loses its marginal significance in Model 3) and gwodeg.fixed (which is not significant in Model 1 but becomes statistically significant in Model 3). With respect to significance, no effect changes from Model 2 to Model 3.
 
@@ -114,7 +118,7 @@ Among the non-significant effects:
 In conclusion, the significant effects in Model 3 emphasize the importance of reciprocity, proactive tie initiation, and cohesive subgroup formation as key drivers of the network's structure, while the network resists hierarchical patterns. Gender does play a role in initiating ties; however, other gender-related effects, such as homophily and the gender of the recipient, are not significant. 
 
 
-###Part 3
+#### Part 3
 
 When performing an ERGM analysis, it is of crucial importance to examine the goodness of fit, as it evaluates how well the model captures the observed network's structure and relational patterns. Here, goodness-of-fit (GOF) diagnostics were performed by setting a random seed to ensure reproducibility across runs. Subsequently, 2000 networks were simulated for comparison with the observed network, using the same seed for consistency.
 The GOF was calculated for the three models, comparing observed network statistics with those simulated from the model. The diagnostics include:
