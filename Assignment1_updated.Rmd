@@ -123,7 +123,7 @@ max_node_info <- subset(attributes, NodeName == max_node_name)
 
 node_type <- max_node_info$Type
 ```
-The node with the highest closeness centrality, labeled T0266, has a closeness centrality value of approximately 0.44. This value indicates that T0266 is relatively close to all other nodes in the network, meaning it can reach other nodes more quickly and efficiently than most other nodes. T0266 is therefore well-positioned to disseminate information or resources across the network, and it does not belong to the three departments taken in consideration.
+The node with the highest closeness centrality, labeled T0266, has a closeness centrality value of approximately 0.44. This value indicates that T0266 is relatively close to all other nodes in the network, meaning it can reach other nodes more quickly and efficiently than most other nodes. T0266 is therefore well-positioned to disseminate information or resources across the network. It does not belong to the three departments taken in consideration.
 
 
 #### Part 4
