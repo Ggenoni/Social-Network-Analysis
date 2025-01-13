@@ -25,13 +25,17 @@ editor_options:
 
 This study applies ERGM analysis to a directed, valued friendship network of 32 network scientists, derived from the Electronic Information Exchange System (EIES) dataset. After dichotomizing the network, three models were estimated:
 
-1.  Purely structural model, capturing key network-level features such as reciprocity, degree distribution, and triadic structures;
-2.  Dyadic-independent model incorporating gender attributes to assess individual-level effects; and
-3.  Combined model integrating both structural and attribute-based effects.
+1.  A purely structural model, capturing key network-level features such as reciprocity, degree distribution, and triadic structures;
+2.  A dyadic-independent model incorporating gender attributes to assess individual-level effects; and
+3.  A combined model integrating both structural and attribute-based effects.
 
 The coefficients of the models are interpreted with a substantial focus on Model 3, followed by goodness-of-fit diagnostics to evaluate how well each model replicates the observed network structure and relational patterns. The combined model, which includes structural features and gender-related effects, provides the most comprehensive representation of the network. However, discrepancies in extreme degree values, certain triadic configurations, and long-range connectivity suggest room for refinement to account for additional effects.
 
 ## Part One: Load Network and Run Models
+
+The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2.
+To focus on strong ties, the directed, valued network is dichotomized and transformed into a network: edges with values of 3 (friend) or 4 (close personal friend) are coded as 1, and all others (0, 1, 2) are coded as 0.
+Gender attributes (from an external dataset) are then assigned to each node, creating an enriched network object for analysis.
 
 ```{r import packages, echo=TRUE, message=FALSE}
 library(sna)
@@ -55,8 +59,6 @@ EIES_T2F_n %v% "Gender"<- Attributes$Gender
 # plot(EIES_T2F_n)
 gplot(EIES_T2F_n, gmode="graph", displaylabels=T, vertex.col=EIES_T2F_n %v% "Gender"*2)
 ```
-
-The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2. To focus on strong ties, the directed, valued network was dichotomized and transformed into a network: edges with values of 3 (friend) or 4 (close personal friend) were coded as 1, and all others (0, 1, 2) were coded as 0. Gender attributes (from an external dataset) were then assigned to each node, creating an enriched network object for analysis.
 
 Three exponential random graph models (ERGMs) are estimated. **Model 1** captures purely structural effects, including edges, mutual ties, geometrically weighted in-degree and out-degree distributions, and two-path dependencies (outgoing and incoming). **Model 2** examines dyadic independent effects by incorporating individual and dyadic attributes, specifically gender as a nodal covariate for both in-degree and out-degree, as well as gender homophily through nodal matching. **Model 3** combines structural and attribute-based effects, integrating the terms from both Models 1 and 2 to provide a comprehensive analysis of the network.
 
