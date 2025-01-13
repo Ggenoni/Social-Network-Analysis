@@ -36,6 +36,10 @@ However, discrepancies in extreme degree values, certain triadic configurations,
 
 ## Part One: Load Network and Run Models
 
+The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2.
+To focus on strong ties, the directed, valued network is dichotomized and transformed into a network: edges with values of 3 (friend) or 4 (close personal friend) are coded as 1, and all others (0, 1, 2) are coded as 0.
+Gender attributes (from an external dataset) are then assigned to each node, creating an enriched network object for analysis.
+
 ```{r import packages, echo=TRUE, message=FALSE}
 library(sna)
 library(ergm)
@@ -58,10 +62,6 @@ EIES_T2F_n %v% "Gender"<- Attributes$Gender
 plot(EIES_T2F_n)
 gplot(EIES_T2F_n, gmode="graph", displaylabels=T, vertex.col=EIES_T2F_n %v% "Gender"*2)
 ```
-
-The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2.
-To focus on strong ties, the directed, valued network was dichotomized and transformed into a network: edges with values of 3 (friend) or 4 (close personal friend) were coded as 1, and all others (0, 1, 2) were coded as 0.
-Gender attributes (from an external dataset) were then assigned to each node, creating an enriched network object for analysis.
 
 Three exponential random graph models (ERGMs) are estimated.
 **Model 1** captures purely structural effects, including edges, mutual ties, geometrically weighted in-degree and out-degree distributions, and two-path dependencies (outgoing and incoming).
