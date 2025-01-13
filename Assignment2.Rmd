@@ -37,7 +37,7 @@ The coefficients of the models are interpreted with a substantial focus on Model
 The combined model, which includes structural features and gender-related effects, provides the most comprehensive representation of the network.
 However, discrepancies in extreme degree values, certain triadic configurations, and long-range connectivity suggest room for refinement to account for additional effects.
 
-## Part 1
+## Part One: Load Network and Run Models
 
 ```{r import packages, echo=TRUE, message=FALSE}
 library(sna)
@@ -218,6 +218,10 @@ EIES_Model3sim2000<-gof(EIES_Model3,
 EIES_Model3sim2000$summary.model
 ```
 
+In the goodness-of-fit diagnostic, each histogram compares an observed network statistic (marked by a vertical red line) to the distribution of that same statistic in a large set of networks simulated from the fitted model.
+If the observed value lies near the center of the distribution, then the model is successfully reproducing that feature of the network.
+Conversely, if the observed value is off to one side or falls outside the simulated range, it indicates that the model may not be capturing that particular aspect of the network very well.
+
 The goodness-of-fit diagnostics for Model 3 indicate a strong alignment between the observed network statistics and the simulated values, as reflected by high MC p-values across all metrics.
 Structural effects, such as edges, mutual ties, and measures of triadic closure (gwesp.OTP.fixed.0.5 and gwesp.ITP.fixed.0.5), are well-captured by the model, showing minimal discrepancies between observed and simulated values.
 Additionally, gender-related covariates, including nodeicov.Gender, nodeocov.Gender, and nodematch.Gender, are also accurately represented, suggesting that the model effectively incorporates both structural and attribute-based dynamics.
@@ -277,8 +281,17 @@ abline(v = EIES_Model3sim2000$summary.model[9, 3], col = "blue", lwd = 3, lty = 
 ```
 
 The *trace plots* showed below are visual diagnostics used to assess the convergence of the Markov Chain Monte Carlo (MCMC) algorithm in Model 3.
-They display the sampled values of parameters over iterations, allowing for the identification of issues such as non-convergence or autocorrelation.
-A well-mixed and stable trace plot indicates that the MCMC has converged, ensuring reliable parameter estimates for the ERGM.
+In a well-behaved chain, we expect the sampled values to fluctuate around some stable mean (the chain\'s stationary distribution) without systematic trends upward or downward.
+The presence of major trends, drifts, or extremely prolonged excursions could indicate that the sampler has not \"mixed\" well or that convergence to a stable distribution has not yet occurred.
+By contrast, if the samples appear roughly like a tight, random cloud of points---oscillating within a limited range but neither wandering away nor getting stuck at extremes---this generally suggests good mixing and supports the notion that the MCMC process has reached stationarity.
+
+In these plots, each statistic (e.g., the number of edges or mutual ties in a simulated network) appears to remain within a relatively consistent band of values across the 2,000 iterations.
+For instance, the trace for **edges** hovers between roughly 160 and 240, showing no noticeable increasing or decreasing trend over time.
+Similarly, **mutual** shifts between about 40 and 80, and the plots for **gwideg** and **gwodeg** fluctuate around stable mid-40s and mid-42s, respectively, without drifting away.
+The **gwesp** parameters (OTP and ITP) also move within their respective ranges, and the gender covariates (both nodeicov, nodeocov, and nodematch for Gender) do not show signs of a systematic trend or long-term drift.
+
+Overall, the absence of any major trends, plateaus, or extremely abrupt jumps indicates that the MCMC procedure is performing reliably for each term in the model.
+This reliability underpins the validity of the fitted ERGM and supports the interpretation that Model 3 has converged, providing stable parameter estimates that capture the observed network structure and attribute effects.
 
 ```{r trace plots, fig.width=40, fig.height=30, echo=FALSE}
 
@@ -318,12 +331,8 @@ Additionally, idegree24 shows a complete mismatch (p=0.000), indicating the mode
 - **Goodness-of-fit for out-degree**: - **Goodness-of-fit for minimum geodesic distance**: - **Goodness-of-fit for triad census**:
 
 ```{r}
-par(mfrow = c(2,3))
 plot(EIES_Model3sim2000)
-```
-
-```{r}
-boxplot(EIES_Model3sim2000$sim.odeg[,1:11])  
+# par(mfrow = c(2,3))
 ```
 
 ```{r}
@@ -331,7 +340,7 @@ boxplot(EIES_Model3sim2000$sim.odeg[,1:11])
 EIES_Model3sim2000$obs.odeg
 ```
 
-```{r, fig.width=40, fig.height=30, echo=FALSE}
+```{r, fig.width=50, fig.height=40, echo=FALSE}
 
 par(mfrow = c(4, 4))
 for (k in 1:16)
