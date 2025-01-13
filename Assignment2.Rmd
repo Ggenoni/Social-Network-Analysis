@@ -224,7 +224,7 @@ Structural effects, such as edges, mutual ties, and measures of triadic closure 
 Additionally, gender-related covariates, including nodeicov.Gender, nodeocov.Gender, and nodematch.Gender, are also accurately represented, suggesting that the model effectively incorporates both structural and attribute-based dynamics.
 This demonstrates that Model 3 provides a robust and comprehensive fit to the observed friendship network.
 
-These findings are shown in the histograms below.
+These findings are illustrated in the histograms below, where the blue dotted line (representing the mean of the predictions) and the red line (representing the value of the observations) are almost entirely overlapping.
 
 ```{r histograms, fig.width=30, fig.height=15, echo=FALSE}
 # Set up the plotting area to have 3 rows and 3 columns
