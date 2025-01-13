@@ -1,7 +1,6 @@
 ---
-title: "Assignment2"
-author: "Gaudenzia Genoni"
-date: "2024-12-30"
+title: "Assignment 2: Exponential Random Graph Model"
+date: "2025-01-13"
 output: 
   pdf_document:    
     latex_engine: xelatex
@@ -19,8 +18,6 @@ editor_options:
   markdown: 
     wrap: sentence
 ---
-
-# Exponential Random Graph Model
 
 #### By Marco Di Stasio, Alessandra Gandini, Gaudenzia Genoni, Yishak Tadele Nigatu
 
@@ -318,44 +315,83 @@ plot(EIES_Model3sim2000$sim.model[,9], type="l", main = paste("Trace plot for no
 
 Finally, the evaluation of the model fit is completed with the analysis of additional metrics, along with a re-presentation of the GOF for model statistics (which was already discussed above).
 
-```{r}
-EIES_Model3sim2000
+```{r goodness of fit diagnostic, fig.align='center', echo=FALSE}
+par(mfrow = c(2,3))
+plot(EIES_Model3sim2000)
 ```
 
 The goodness-of-fit diagnostics for the additional metrics in Model 3 reveal varying levels of alignment between the observed and simulated network statistics, as detailed below for each of them.
-- **Goodness-of-fit for in-degree**: the model captures the overall in-degree distribution reasonably well for most categories, as indicated by high MC p-values (e.g., idegree6 p=0.926, idegree7 p=1.000, and idegree10 p=1.000).
-However, there are notable deviations for specific categories.
-For example, idegree1 (p=0.207) is underestimated, as the observed frequency (3) is higher than the mean prediction (1.1410).
-Conversely, idegree5 (p=0.169) is overestimated, with the predicted mean (3.8815) exceeding the observed value (1).
-Additionally, idegree24 shows a complete mismatch (p=0.000), indicating the model fails to replicate extreme high in-degree values, likely due to their rarity in the network.
-- **Goodness-of-fit for out-degree**: - **Goodness-of-fit for minimum geodesic distance**: - **Goodness-of-fit for triad census**:
 
-```{r}
-plot(EIES_Model3sim2000)
-# par(mfrow = c(2,3))
-```
+#### Boxplots of Key Statistics (Edges, Mutual, gwodeg, gwesp, nodecov.Gender, etc.)
 
-```{r}
+The fitted model reproduces the fundamental network features very well, evidenced by high MC p‐values for edges (p=1.000), mutual ties (p=0.979), and other key statistics (gwideg, gwodeg, gwesp, and nodematch by Gender).
+For instance, the observed number of edges (204) sits comfortably within the simulated range (159 to 250), and the same holds for mutual ties (observed=60, mean=59.75).
+These results indicate that the model captures both basic connectivity (edges) and more nuanced structural tendencies (reciprocity, geometrically weighted terms, gender effects).
 
-EIES_Model3sim2000$obs.odeg
-```
+#### Out‐Degree and In‐Degree Distributions
 
-```{r, fig.width=50, fig.height=40, echo=FALSE}
+The second and third plots show the *distribution* of out‐degree (number of ties sent) and in‐degree (number of ties received) across all nodes.
+The outdegree plot focuses on how many friends each person *nominates*, whereas the indegree plot shows how many friend nominations each person *receives*.
 
-par(mfrow = c(4, 4))
-for (k in 1:16)
-{
-  hist(EIES_Model3sim2000$sim.triadcensus[,k], main=colnames(EIES_Model3sim2000$sim.triadcensus)[k])
-  abline(v = EIES_Model3sim2000$obs.triadcensus[k], col = "blue", lwd = 3, lty=2)
+Overall, the model does a good job fitting most in‐degree categories, as shown by high p‐values for degrees such as 6 (p=0.926), 7 (p=1.000), and 10 (p=1.000).
+However, certain counts depart from the observed data.
+For example, the frequency of nodes with 1 incoming tie (observed=3) is underestimated (mean=1.1410; p=0.207), whereas the number of nodes with 5 incoming ties (observed=1) is overestimated (mean=3.8815; p=0.169).
+The biggest mismatch occurs at the extreme end (idegree24): the model never predicts this very high in‐degree (mean=0.0000; p=0.000), suggesting it struggles with nodes that receive a very large number of ties.
+
+The out‐degree distribution also aligns well with the observed data in most categories, reflected in high p‐values for many degrees (e.g., odegree4 p=1.000, odegree6 p=1.000).
+Nonetheless, the model underestimates some degrees (e.g., odegree3 observed=2 vs. mean=5.9685, p=0.068) and slightly overestimates others (e.g., odegree7 p=0.079, odegree9 p=0.069).
+A notable discrepancy occurs at odegree20 (observed=1 vs. mean=0.028, p=0.056), indicating the model struggles to capture the presence of a rare "super‐connector."
+
+### Triad Census
+
+The triad census (fourth plot) displays the proportion of all triads (three‐node subgraphs) of each type---e.g., \"003\" means no ties among the three nodes, \"021D\" means a particular pattern of two directed edges, \"111U\" a fully mutual triad, and so on.
+The black line (or diamonds) often represents the observed proportions of each triad type; the boxes/whiskers indicate the simulated range.
+
+Most triad types appear in realistic proportions (e.g., 003 has p=0.693, 102 p=0.874), which suggests the model handles common triad structures---no ties, single arcs, and so forth---adequately.
+However, certain directed triads are misestimated.
+For instance, 021U (p=0.000) and 021C (p=0.001) deviate markedly from the observed data(can be seen from the following picture), and fully reciprocal triads (111D, 111U) also show some discrepancies (p=0.040 and 0.218, respectively).
+Although overall triadic structure is captured, those particular directed subgraphs remain more challenging for the model.
+
+```{r, fig.width=8, fig.height=6, echo=FALSE, fig.align='center'}
+temp <- c(5, 6)
+par(mfrow = c(2, 1))
+
+for (k in temp) {
+  hist(
+    EIES_Model3sim2000$sim.triadcensus[, k],
+    main = paste("Poor Estimates for ", colnames(EIES_Model3sim2000$sim.triadcensus)[k])
+  )
+  abline(
+    v   = EIES_Model3sim2000$obs.triadcensus[k],
+    col = "blue",
+    lwd = 3,
+    lty = 2
+  )
 }
 
 ```
 
-```{r}
+### Geodesic Distance Distribution
 
-EIES_Model3sim2000$obs.triadcensus
+In the final plot, each dyad\'s minimum geodesic distance (the shortest path length between two people) is tabulated and grouped, then compared across observed vs. simulated networks.
+Distances of 1 mean direct ties; distance 2 means you can reach one person via a single intermediary, and so forth.
+
+Distances of 1, 5, 6, 7, 8, and etc match closely between observation and simulation, as indicated by p‐values near 1.0.
+Distance 2 (observed=443 vs. mean=483.53, p=0.310) and distance 3 (observed=262 vs. mean=232.94, p=0.417) also fall within acceptable ranges.
+The largest gap arises at distance 4 (observed=82, mean=40.29, p=0.126), suggesting the model underestimates the number of paths requiring four steps.
+Even so, the overall shape of the distance distribution is well captured, meaning the model generally reflects how "far apart" nodes are in this network.
+
+```{r EIES_Model3sim2000 summary}
+EIES_Model3sim2000
 ```
 
 In conclusion, the model is satisfactory in capturing the overall structure and many relational patterns of the network, particularly those related to reciprocity, clustering, and the influence of gender attributes.
 However, its limitations in handling extreme degree values, specific triadic structures, and longer paths suggest that additional effects may need to be included to improve the model's fit.
 These could include effects related to preferential attachment, node-specific roles, or alternative triadic configurations, which might better capture the underlying processes driving tie formation in the network.
+
+### Bibliography
+
+Borgatti, S. P., Everett, M. G., Johnson, J. C., & Agneessens, F.
+(2022).
+Analyzing social networks using R.
+SAGE Publications.
