@@ -9,7 +9,7 @@ output: pdf_document
 
 
 #### Introduction  
-This analysis focuses on the Borgatti_Scientists504 dataset, examining collaboration patterns through an undirected network where nodes represent individual scientists, and edges indicate collaborative relationships. Specifically, the structural positions of scientists from three fields — Management Sciences, Economics, and Behavioral Sciences — are compared to those from other disciplines to assess potential differences in their collaboration approaches. To achieve this, two measures of network centrality are calculated to evaluate positional importance, and their relationship with the disciplinary attribute (coded as 1 for Management, Economics, and Behavioral Sciences, and 0 otherwise) is investigated.
+This analysis focuses on the Borgatti_Scientists504 dataset, examining collaboration patterns through an undirected network where nodes represent individual scientists, and edges indicate collaborative relationships. Specifically, the structural positions of scientists from three fields — Management Sciences, Economics, and Behavioral Sciences — are compared to those from other disciplines to assess potential differences in their collaboration approaches. To achieve this, two measures of network centrality are calculated for evaluating positional importance, and their relationship with the disciplinary attribute is investigated.
 
 #### Part 1  
 <br/>
@@ -75,17 +75,15 @@ gplot(
   label.cex = 0.7          
 )
 ```
-Interestingly, a clustering of the network can be observed, with orange nodes collaborating more intensively among themselves and blue nodes preferentially connecting with their peers. This observation suggests, at least upon initial inspection, a degree of homophily in the graph, with scientists from the same department tending to cluster together. It will be interesting to see what new insights can be gained from analyzing the measures of position.
-
+Interestingly, a clustering of the network can be observed, with orange nodes (representing the studied departments) collaborating more intensively among themselves and blue nodes preferentially connecting with their peers. This observation suggests, at least upon initial inspection, a degree of clustering among nodes based on departmental affiliation. Further analysis of the two measures of position, as detailed in the following parts, will provide deeper insights into collaboration patterns.
 
 #### Part 3
 
-The two chosen measures of position are degree centrality and closeness centrality. 
+In this analysis, the two chosen measures of position are degree centrality and closeness centrality, which will later be used in a correlation study.
 
 - Degree centrality measures the number of direct connections a node has. In general, nodes with higher degrees are considered more prominent and are often viewed as more significant by other members of the network. When assuming that information flows along ties, degree centrality can be interpreted as an indicator of a node's level of exposure within the network (see Borgatti, Everett, Johnson, & Agneessens, 2022, p. 172).
 
 - Closeness centrality is the sum of geodesic distances from a node to all other nodes in the network. In this case, the normalized version of closeness centrality is used, which involves scaling the values so that the maximum centrality is 1 and higher scores indicate greater centrality. In the context of information flow, closeness centrality can be interpreted as the minimum time required for something to reach a given node. A node with a high normalized closeness score is close to most other nodes, meaning that information originating from a random node can reach it more quickly. Additionally, since diffusion processes often introduce distortion, central nodes tend to receive more reliable information. Thus, a high normalized closeness centrality can be seen as an advantage, as it implies faster access to information with less distortion (see Borgatti, Everett, Johnson, & Agneessens, 2022, p. 179).
-
 
 
 ```{r}
@@ -123,7 +121,7 @@ max_node_info <- subset(attributes, NodeName == max_node_name)
 
 node_type <- max_node_info$Type
 ```
-The node with the highest closeness centrality, labeled T0266, has a closeness centrality value of approximately 0.44. This value indicates that T0266 is relatively close to all other nodes in the network, meaning it can reach other nodes more quickly and efficiently than most other nodes. T0266 is therefore well-positioned to disseminate information or resources across the network. It does not belong to the three departments taken in consideration.
+The node with the highest closeness centrality, labeled T0266, has a closeness centrality value of approximately 0.44. This value indicates that T0266 is relatively close to all other nodes: it is therefore well-positioned to disseminate information or resources across the network. It does not however belong to the three departments taken in consideration.
 
 
 #### Part 4
@@ -134,8 +132,7 @@ A  correlation analysis between degree centrality and closeness centrality withi
 cor.test(degree_centrality, closeness_centrality)
 ```
 
-The analysis reveals a strong positive correlation between degree centrality and closeness centrality, with a correlation coefficient of 0.7472. This indicates that scientists with many direct connections (high degree centrality) are also well-positioned within the network to quickly access or disseminate information (high closeness centrality). The relationship is highly statistically significant, as evidenced by a very small p-value.
-In practical terms, this means that scientists with high degree centrality not only engage in extensive collaborations but also occupy advantageous positions that facilitate the efficient flow of information or resources within the network. 
+The analysis reveals a strong positive correlation between degree centrality and closeness centrality, with a correlation coefficient of 0.7472. This indicates that scientists with many direct connections (high degree centrality) are also well-positioned within the network to quickly access or disseminate information (high closeness centrality). The relationship is highly statistically significant, as evidenced by a very small p-value. 
 
 
 #### Part 5
@@ -146,22 +143,23 @@ The final analysis investigates how centrality metrics relate to the disciplinar
 cor.test(degree_centrality, attributes$Type)
 ```
 
-The correlation coefficient of -0.117 indicates a weak negative relationship between degree centrality and the attribute Type (type =1 for the three departments, type =0 the others).This means that individuals in the three specific departments tend to have slightly lower degree centrality compared to those in other departments. P-value is less than 0.05 so it’s statistically significant (0.008548).
+The correlation coefficient of -0.117 indicates a weak negative relationship between degree centrality and the attribute Type (type =1 for the three departments, type =0 the others).This means that individuals in the three specific departments tend to have slightly lower degree centrality compared to those in other departments. P-value is less than 0.05, so it’s statistically significant (0.008548).
 
 ```{r}
 cor.test(closeness_centrality, attributes$Type)
 ```
 
-The correlation between closeness centrality and the departmental membership is -0.2004, indicating a weak negative relationship. This result
-is statistically significant (p-value = 5.823e-06).
+The correlation between closeness centrality and the departmental membership is -0.2004, indicating a weak negative relationship. It is statistically significant (p-value = 5.823e-06).
 
-These results suggest that, compared to scientists from other disciplines, scientists from the studied fields—Management, Economics, and Behavioral Sciences—are slightly less central in terms of their direct connections (degree centrality) and their ability to efficiently reach other nodes (closeness centrality): they may collaborate more selectively or within smaller, denser clusters, reducing their overall centrality compared to peers in other disciplines who might engage in broader or more distributed collaborations. However, the correlation magnitudes are quite small, implying that disciplinary differences in centrality are modest and not a dominant feature of the network.
+These results suggest that, compared to scientists from other disciplines, scientists from the three studied fields are slightly less central in terms of their direct connections (degree centrality) and their ability to efficiently reach other nodes (closeness centrality): they may collaborate more selectively or within smaller, denser clusters, reducing their overall centrality compared to peers in other disciplines. However, the correlation magnitudes are quite small, implying that disciplinary differences in centrality are modest and not a dominant feature of the network.
 
 #### Conclusion
 
-In this project, the collaboration network of scientists from the Borgatti_Scientists504 dataset was analyzed to explore structural positions and their relationship with a disciplinary attribute. Degree centrality and closeness centrality were chosen as measures of position due to their ability to capture distinct yet complementary aspects of network prominence: direct connections and strategic accessibility.
+Iconclusion, the collaboration network of scientists from the Borgatti_Scientists504 dataset was analyzed to explore structural positions and their relationship with a disciplinary attribute. Degree centrality and closeness centrality were chosen as measures of position due to their ability to capture distinct yet complementary aspects of network prominence: direct connections and strategic accessibility.
 
-The analysis of the whole network revealed a strong positive correlation (r=0.7472) between degree centrality and closeness centrality, indicating that scientists with many direct connections tend to occupy positions that allow efficient access to others in the network. Furthermore, when these centrality measures were correlated with the binary attribute of disciplinary membership (Management Sciences, Economics, and Behavioral Sciences), both revealed weak negative relationships. This hints at differences in collaboration patterns between the two groups, suggesting that scientists from the studied fields collaborate slightly less widely and are marginally less accessible within the network compared to their peers in other disciplines. Building on this exploratory work, future research could delve deeper into the network structure, such as examining the dynamics of individual departments or exploring additional attributes that may influence collaboration patterns.
+The analysis of the whole network revealed a strong positive correlation (r=0.7472) between degree centrality and closeness centrality, indicating that scientists with many direct connections tend to occupy positions that allow efficient access to others in the network. Furthermore, when these centrality measures were correlated with the binary attribute of disciplinary membership, both revealed weak negative relationships. This hints at differences in collaboration patterns between the two groups, suggesting that scientists from the three studied fields collaborate slightly less widely and are marginally less accessible within the network compared to their colleagues in other disciplines. 
+
+Building on this exploratory work, future research could delve deeper into the network structure, such as examining the dynamics of individual departments or exploring additional attributes that may influence collaboration patterns.
 
 
 #### Bibliography  
