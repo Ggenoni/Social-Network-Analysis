@@ -71,7 +71,7 @@ The resulting graph suggests a polarization into two macro-groups; however, furt
 par(mar=c(0,0,0,0))
 ```
 
-```{r, fig.width=40, fig.height=30}
+```{r, fig.width=12, fig.height=8}
 gplot(social_net, gmode = "graph")
 ```
 
@@ -85,7 +85,7 @@ The edges connecting the nodes are colored gray.
 node_colors <- ifelse(attributes$Type == 1, "orange", "blue")
 ```
 
-```{r, fig.width=40, fig.height=30}
+```{r, fig.width=12, fig.height=8}
 gplot(
   social_net,
   gmode = "graph",
