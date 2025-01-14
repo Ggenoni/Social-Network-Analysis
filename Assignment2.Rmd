@@ -146,7 +146,7 @@ The negative and significant ITP parameter implies that if two individuals both 
 This coefficient tests whether being male (coded as 0) makes one more likely to receive friend nominations. It is essentially zero and non‐significant, indicating that once we control for other network tendencies, male actors do not appear to receive significantly more (or fewer) friendship ties than female actors.
 8.  **nodeocov.Gender - female** (Estimate: **1.236**, **p \< 0.001**):
 This significant positive coefficient indicates that females (coded as 1) are more likely to send friendship ties than males. Notably, it is also significant in Model 2 at a similar magnitude (1.274). Thus, even after accounting for structural processes like reciprocity and triadic closure, women in this network remain more active in naming friends than men.
-9.  **nodematch.Gender** (Estimate: **-0.071, **not significant**):
+9.  **nodematch.Gender** (Estimate: **-0.071**, **not significant**):
 This nonsignificant coefficient suggests that there is no strong homophily or heterophily by gender for close friendships---i.e., men do not show a strong tendency to befriend men, nor women to befriend women, relative to cross‐gender friendships, once other factors are considered. This is consistent across Models 2 and 3.
 
 Generally, **Model 3** suggests that both structural forces (reciprocity, triadic closure, activity patterns) and gender attributes shape who becomes friends in this network, though some anticipated effects (like gender‐based popularity or homophily) do not appear to be present.
