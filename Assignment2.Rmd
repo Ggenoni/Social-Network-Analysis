@@ -29,12 +29,12 @@ This study applies ERGM analysis to a directed, valued friendship network of 32 
 2.  a dyadic-independent model incorporating gender attributes to assess individual-level effects;
 3.  a combined model integrating both structural and attribute-based effects.
 
-The coefficients of the models are interpreted with a substantial focus on Model 3, followed by goodness-of-fit diagnostics to evaluate how well each model replicates the observed network structure and relational patterns. Model 3 provides the most comprehensive representation of the network. However, there is still room for refinement, as some effects may still not be controlled.
+The coefficients of the models are interpreted with a substantial focus on Model 3, followed by goodness-of-fit diagnostics to evaluate how well each model replicates the observed network structure and relational patterns. Model 3 provides the most comprehensive representation of the network. However, there is still room for refinement, as certain effects, such as rare triadic configurations or extreme degree values, may not yet be fully controlled for.
 
 ## Part One: the Network and the three Models
 
 The study examines acquaintance relationships among 32 network scientists using the EIES dataset at Time 2.
-To focus on strong ties, the directed, valued network is dichotomized and transformed into a network: edges with values of 3 (friend) or 4 (close personal friend) are coded as 1, and all others (0, 1, 2) are coded as 0.
+To focus on strong ties, the directed, valued network is dichotomized: edges with values of 3 (friend) or 4 (close personal friend) are coded as 1, and all others (0, 1, 2) are coded as 0.
 Gender attributes (from an external dataset) are then assigned to each node, creating an enriched network object for analysis.
 
 ```{r import packages, echo=TRUE, message=FALSE}
@@ -55,6 +55,10 @@ EIES_T2F_n<-as.network(EIES_T2F_n, directed=T) #transform into a network object
 ```{r load gender data, fig.align='center'}
 Attributes <- read_excel("data/Data_Gender_3.xlsx")
 EIES_T2F_n %v% "Gender"<- Attributes$Gender
+```
+
+```{r fig.width=6, fig.height=6, echo=FALSE}
+gplot(EIES_T2F_n, gmode="graph", displaylabels=T, vertex.col=EIES_T2F_n %v% "Gender"*2)
 ```
 
 Three exponential random graph models (ERGMs) are estimated. **Model 1** captures purely structural effects, including edges, mutual ties, geometrically weighted in-degree and out-degree distributions, and two-path dependencies (outgoing and incoming). **Model 2** examines dyadic independent effects by incorporating individual and dyadic attributes, specifically gender as a nodal covariate for both in-degree and out-degree, as well as gender homophily through nodal matching. **Model 3** combines structural and attribute-based effects, integrating the terms from both Models 1 and 2 to provide a comprehensive analysis of the network.
@@ -110,10 +114,10 @@ The results are presented in the following table:
 |--------------|--------------|---------|-----------|---------|-----------|---------|
 | edges            | -4.825 (0.363)        | \*\*\*       | -2.941 (0.185)        | \*\*\*       | -5.562 (0.446)        | \*\*\*       |
 | mutual           | 2.603 (0.344)         | \*\*\*       | 2.486 (0.291)         | \*\*\*       | 2.678 (0.360)         | \*\*\*       |
-| gwideg.fixed     | 2.195 (1.135)         | .            | NA                    | NA           | 1.641 (1.164)         |              |
-| gwodeg.fixed     | 4.377 (2.792)         |              | NA                    | NA           | 16.286 (7.005)        | \*           |
-| gwesp.OTP.fixed  | 1.967 (0.218)         | \*\*\*       | NA                    | NA           | 1.853 (0.223)         | \*\*\*       |
-| gwesp.ITP.fixed  | -0.627 (0.110)        | \*\*\*       | NA                    | NA           | -0.637 (0.118)        | \*\*\*       |
+| gwidegree        | 2.195 (1.135)         | .            | NA                    | NA           | 1.641 (1.164)         |              |
+| gwodegree        | 4.377 (2.792)         |              | NA                    | NA           | 16.286 (7.005)        | \*           |
+| dgwesp.OTP       | 1.967 (0.218)         | \*\*\*       | NA                    | NA           | 1.853 (0.223)         | \*\*\*       |
+| dgwesp.ITP       | -0.627 (0.110)        | \*\*\*       | NA                    | NA           | -0.637 (0.118)        | \*\*\*       |
 | nodeicov.Gender  | NA                    | NA           | 0.053 (0.217)         |              | 0.005 (0.189)         |              |
 | nodeocov.Gender  | NA                    | NA           | 1.274 (0.210)         | \*\*\*       | 1.236 (0.309)         | \*\*\*       |
 | nodematch.Gender | NA                    | NA           | -0.027 (0.162)        |              | -0.071 (0.161)        |              |
@@ -124,43 +128,37 @@ In Model 3, six effects are significant (edges, mutual, gwodeg.fixed, gwesp.OTP.
 
 Below, **Model 3** is discussed in detail and notable differences from **Models 1** (structural only) and **2** (attributes only) are highlighted.
 
-### Model 3 Descriptions
+### Interpretation of Model 3 Estimates
 
-1.  **Edges**
-    -   **Estimate (SE)**: **-5.562 (0.446)**, **p \< 0.001**
-    -   **Interpretation**: The strong negative coefficient indicates a low baseline propensity for any given pair to be "friends". In a friendship context, this is typical because only a minority of all possible ties are strong friendships. This could also be a result of the sparsity of the network.
-2.  **Mutual**
-    -   **Estimate (SE)**: **2.678 (0.360)**, **p \< 0.001**
-    -   **Interpretation**: This significant positive effect suggests a strong tendency for reciprocity. In other words, if Person A calls Person B a friend, Person B is much more likely to call Person A a friend in return. This effect remains comparably large and significant across all models (it is also highly significant in **Models 1** and **2**).
-3.  **gwidegree**
-    -   **Estimate (SE)**: **1.641 (1.164)**, **not significant**
-    -   **Interpretation**: This parameter captures "popularity" (i.e., whether certain nodes consistently receive many friendship nominations). Although it was marginally significant in **Model 1** (p ≈ 0.05), it is not statistically significant in **Model 3**. Therefore, after accounting for other structural and gender effects, there is no strong residual tendency for some individuals to be universally popular as "friends."
-4.  **gwodegree**
-    -   **Estimate (SE)**: **16.286 (7.005)**, **p \< 0.05**
-    -   **Interpretation**: This effect captures "activity" (i.e., sending out multiple friendship nominations). While this effect was positive but not statistically significant in **Model 1**, it becomes both larger and significant in **Model 3**, implying that once we control for gender and other structural factors, some individuals indeed nominate friends at a higher‐than‐expected rate. Substantively, this suggests a group of "active connectors" who name multiple close colleagues as friends.
-5.  **dgwesp.OTP**
-    -   **Estimate (SE)**: **1.853 (0.223)**, **p \< 0.001**
-    -   **Interpretation**: A positive and significant OTP parameter indicates that triadic closure is especially likely when an individual sends ties to two different people (i.e., "friends of my out‐friends tend to be my friends too"). This finding aligns with typical friendship processes where one's out‐contacts may be more likely to know each other, and it is very similar in magnitude to **Model 1**, implying that adding gender attributes does not substantially alter this triadic closure dynamic.
-6.  **dgwesp.ITP**
-    -   **Estimate (SE)**: **-0.637 (0.118)**, **p \< 0.001**
-    -   **Interpretation**: In contrast, the negative and significant ITP parameter implies that if two people both receive ties from the same individual, they are *less* likely than random to be tied themselves (once we account for all other effects). In friendship terms, this suggests that people do not necessarily become friends merely because they share a common "admirer." This pattern remains consistent from **Model 1** through **Model 3**.
-7.  **nodeicov("Gender") - male**
-    -   **Estimate (SE)**: **0.005 (0.189)**, **not significant**
-    -   **Interpretation**: This coefficient tests whether being **male(coded as 0)** makes one more likely to *receive* friend nominations. It is essentially zero and non‐significant, indicating that once we control for other network tendencies, male actors do not appear to receive significantly more (or fewer) friendship ties than female actors.
-8.  **nodeocov("Gender"=1) - female**
-    -   **Estimate (SE)**: **1.236 (0.309)**, **p \< 0.001**
-    -   **Interpretation**: This significant positive coefficient indicates that **females(coded as 1)** are more likely to send friendship ties than males. Notably, it was also significant in **Model 2** at a similar magnitude (1.274). Thus, even after accounting for structural processes like reciprocity and triadic closure, women in this network remain more active in naming friends than men.
-9.  **nodematch("Gender"=0)**
-    -   **Estimate (SE)**: **-0.071 (0.161)**, **not significant**
-    -   **Interpretation**: This nonsignificant coefficient suggests that there is no strong homophily or heterophily by gender for close friendships---i.e., men do not show a strong tendency to befriend men, nor women to befriend women, relative to cross‐gender friendships, once other factors are considered. This is consistent across **Models 2** and **3**.
+1.  **Edges** (Estimate: **-5.562** , **p \< 0.001**)
+The strong negative coefficient indicates a low baseline propensity for any given pair to be "friends". In a friendship context, this is typical because only a minority of all possible ties are strong friendships.
+2.  **Mutual** (Estimate: **2.678**, **p \< 0.001**)
+This significant positive effect suggests a strong tendency for reciprocity. In other words, if Person A calls Person B a friend, Person B is much more likely to call Person A a friend in return. This effect remains comparably large and significant across all models (it is also highly significant in Models 1 and 2).
+3.  **gwidegree** (Estimate: **1.641**, **not significant**)
+The a positive coefficient would suggest that popular individuals (i.e., those who receive many friendship ties) may have a slight tendency to attract additional ties. The effect, however, is not strong enough to reach statistical significance.
+4.  **gwodegree** (Estimate: **16.286**, **p \< 0.05**)
+This effect captures "activity" (i.e., actively initiating multiple ties, connected to a high out-degree). In Model 3 it is both larger and significant, implying that once we control for gender and other structural factors, some individuals indeed nominate friends at a higher‐than‐expected rate and create opportunities for others to become integrated into the friendship network.
+5.  **dgwesp.OTP** (Estimate: **1.853**, **p \< 0.001**)
+A positive and significant OTP parameter indicates that triadic closure is especially likely when an individual sends ties to two different people (i.e., "friends of my out‐friends tend to be my friends too"). This finding aligns with typical friendship processes where one's out‐contacts may be more likely to know each other, and it is very similar in magnitude to Model 1, implying that adding gender attributes does not substantially alter this triadic closure dynamic.
+6.  **dgwesp.ITP** (Estimate: **-0.637**, **p \< 0.001**)
+The negative and significant ITP parameter implies that if two individuals both send ties to the same person, they are less likely than random to form a tie with each other. In friendship networks, this suggests that sharing a common recipient does not necessarily foster direct relationships between the two individuals. This pattern remains consistent from Model 1 through Model 3.
+7.  **nodeicov.Gender - male** (Estimate: **0.005**, **not significant**)
+This coefficient tests whether being male (coded as 0) makes one more likely to receive friend nominations. It is essentially zero and non‐significant, indicating that once we control for other network tendencies, male actors do not appear to receive significantly more (or fewer) friendship ties than female actors.
+8.  **nodeocov.Gender - female** (Estimate: **1.236**, **p \< 0.001**)
+This significant positive coefficient indicates that females (coded as 1) are more likely to send friendship ties than males. Notably, it is also significant in Model 2 at a similar magnitude (1.274). Thus, even after accounting for structural processes like reciprocity and triadic closure, women in this network remain more active in naming friends than men.
+9.  **nodematch.Gender** (Estimate: **-0.071, **not significant**)
+This nonsignificant coefficient suggests that there is no strong homophily or heterophily by gender for close friendships---i.e., men do not show a strong tendency to befriend men, nor women to befriend women, relative to cross‐gender friendships, once other factors are considered. This is consistent across Models 2 and 3.
+
+Generally, **Model 3** suggests that both structural forces (reciprocity, triadic closure, activity patterns) and gender attributes shape who becomes friends in this network, though some anticipated effects (like gender‐based popularity or homophily) do not appear to be present.
 
 ### Notable Differences from Models 1 and 2 to Model 3
 
--   **gwodegree**: Became statistically significant in **Model 3** but was not in **Model 1**(β=4.372,p=0.117), highlighting that individuals who send many ties ("outgoing activity") do not significantly influence the overall network structure at this stage. However, when gender attributes are introduced in Model 3, individuals who actively initiate multiple friendships (high out-degree) appear to play an important role in shaping the network, especially when considering the sender's gender. This could reflect that certain individuals are more proactive in initiating friendships, and their role becomes more evident when both structural and gender-related effects are accounted for.
--   **Edges**: Became more strongly negative in **Model 3** (--5.562) than in **Models 1** or **2**, a typical pattern when multiple positive interaction processes (e.g., reciprocity, triadic closure) are added.
--   **gwidegree**: Marginally significant in **Model 1** (p ≈ 0.05, β=2.195), then not significant when attributes were included in **Model 3**. This suggests that individuals who receive many ties (are "popular") have a slightly increased likelihood of forming additional friendships. When gender attributes are introduced in Model 3, the previously observed in-degree popularity effect is partly explained by other structural or gender-related factors. This suggests that "popularity" in terms of receiving ties is less crucial in explaining tie formation when accounting for sender gender and other structural dynamics. Friendship in this network may not be strongly driven by central hubs but instead distributed across more reciprocal or cohesive relationships.
+As can be seen from the table, the only effects that vary in significance from Model 1 to Model 3 are **gwidegree** (which decreases slightly and loses its marginal significance in Model 3) and **gwodegree** (which is not significant in Model 1 but becomes statistically significant in Model 3). Their interpretation is detailed below. With respect to significance, no effect changes from Model 2 to Model 3.
 
-Generally, **Model 3** suggests that both structural forces (reciprocity, triadic closure, activity patterns) and gender attributes shape who becomes friends in this network, though some anticipated effects (like gender‐based popularity or homophily) do not appear to be present.
+-   For **gwidegree**, the marginally significant positive coefficient in Model 1 (β=2.195,p=0.053) suggests that individuals who receive many ties (are "popular") have a slightly increased likelihood of forming additional friendships. When gender attributes are introduced in Model 3, the previously observed in-degree popularity effect is partly explained by other structural or gender-related factors. This suggests that "popularity" in terms of receiving ties is less crucial in explaining tie formation when accounting for sender gender and other structural dynamics.
+
+-   For *gwodeg.fixed*, the non-significant coefficient in Model 1 (β=4.372,p=0.117) indicates that individuals who send many ties ("outgoing activity") do not significantly influence the overall network structure at this stage. However, when gender attributes are introduced in Model 3, the role of individuals who are more proactive in initiating friendships becomes more evident in shaping the network, especially when considering the sender's gender.
+
 
 ## Part 3: Goodness of Fit
 
@@ -281,7 +279,7 @@ plot(EIES_Model3sim2000$sim.model[,9], type="l", main = paste("Trace plot for no
 
 ### Goodness-of-Fit Diagnostics for Model 3
 
-Finally, the evaluation of Model 3’s fit is extended to include additional metrics, complementing the previously discussed GOF statistics: these include node-level degree distributions (in-degree and out-degree), geodesic distances, and triadic configurations.
+Finally, the evaluation of Model 3’s fit is extended to include the other additional metrics (complementing the previously discussed GOF statistics): these are node-level degree distributions (in-degree and out-degree), geodesic distances, and triadic configurations.
 The values are reported below, followed by their graphical representation and a brief description for each.
 
 ```{r EIES_Model3sim2000 summary}
@@ -299,7 +297,7 @@ As already mentioned, the fitted model reproduces the fundamental network featur
 
 #### Out‐Degree and In‐Degree Distributions
 
-The second and third plots show the *distribution* of out‐degree (number of ties sent) and in‐degree (number of ties received) across all nodes. The outdegree plot focuses on how many friends each person *nominates*, whereas the indegree plot shows how many friend nominations each person *receives*.
+The second and third plots show the *distribution* of out‐degree (number of ties sent) and in‐degree (number of ties received) across all nodes. The outdegree plot focuses on how many friends each person nominates, whereas the indegree plot shows how many friend nominations each person receives.
 
 Overall, the model does a good job fitting most in‐degree categories, as shown by high p‐values for degrees such as 6 (p=0.926), 7 (p=1.000), and 10 (p=1.000). However, certain counts depart from the observed data. For example, the frequency of nodes with 1 incoming tie (observed=3) is underestimated (mean=1.1410; p=0.207), whereas the number of nodes with 5 incoming ties (observed=1) is overestimated (mean=3.8815; p=0.169). The biggest mismatch occurs at the extreme end (idegree24): the model never predicts this very high in‐degree (mean=0.0000; p=0.000), suggesting it struggles with nodes that receive a very large number of ties.
 
@@ -307,7 +305,7 @@ The out‐degree distribution also aligns well with the observed data in most ca
 
 ### Triad Census
 
-The triad census (fourth plot) displays the proportion of all triads (three‐node subgraphs) of each type---e.g., \"003\" means no ties among the three nodes, \"021D\" means a particular pattern of two directed edges, \"111U\" a fully mutual triad, and so on. In Model 3,, most triad types appear in realistic proportions (e.g., 003 has p=0.693, 102 p=0.874), which suggests the model handles common triad structures adequately. However, certain directed triads are misestimated. For instance, 021U (p=0.000) and 021C (p=0.001) deviate markedly from the observed data (as can be seen in detail from the following picture), and fully reciprocal triads (111D, 111U) also show some discrepancies (p=0.040 and 0.218, respectively). Although overall triadic structure is captured, those particular directed subgraphs remain more challenging for the model.
+The triad census (fourth plot) displays the proportion of all triads (three‐node subgraphs) of each type---e.g., \"003\" means no ties among the three nodes, \"021D\" means a particular pattern of two directed edges, \"111U\" a fully mutual triad, and so on. In Model 3,, most triad types appear in realistic proportions (e.g., 003 has p=0.693, 102 p=0.874), which suggests the model handles common triad structures adequately. However, certain directed triads are misestimated. For instance, 021U (p=0.000) and 021C (p=0.001) deviate markedly from the observed data (as can be seen in detail from the following picture), and fully reciprocal triads (111D, 111U) also show some discrepancies (p=0.040 and 0.218, respectively). Although overall triadic structure is captured, those directed subgraphs remain more challenging for the model.
 In particular, 021U is the configuration where one node has outgoing ties to two others, but those two nodes are not connected to each other. This type of triad often reflects hierarchical or source-like structures and is harder to capture when the model does not fully account for asymmetrical dependency patterns. Meanwhile, 021C is the configuration where the ties form a directed cycle among the three nodes. This structure often represents feedback or cyclical interactions, which may be underrepresented or poorly modeled when longer dependencies or complex reciprocal relationships are not explicitly incorporated.
 
 ```{r, fig.width=8, fig.height=6, echo=FALSE, fig.align='center'}
@@ -339,9 +337,9 @@ Distances of 1, 5, 6, 7, 8, and etc match closely between observation and simula
 
 In conclusion, of all the models, Model 3 provides the most comprehensive fit to the data. The analysis of its estimates demonstrates that both structural dynamics, such as reciprocity and triadic closure, and attribute-based effects, such as gender differences in outgoing activity, significantly shape the formation of strong ties in the network. Notably, reciprocity and outgoing activity emerge as key drivers of friendship ties, while cross-gender friendships are as likely as same-gender friendships, suggesting no strong gender homophily.
 
-At the same time, the GOF analysis demonstrates that the model aligns closely with observed network statistics for edges, mutual ties, degree distributions, and geodesic distances. It also successfully incorporates gender-related covariates, reflecting both structural and relational patterns within the network.
+At the same time, the GOF analysis demonstrates that the model aligns closely with the observed network statistics for edges, mutual ties, degree distributions, and geodesic distances. It also successfully incorporates gender-related covariates, reflecting both structural and relational patterns within the network.
 
-However, certain challenges remain. The model struggles to capture extreme degree values, such as nodes with very high in-degrees or out-degrees, and rare triadic configurations, such as hierarchical (021U) and cyclical (021C) structures. These discrepancies suggest that additional structural or latent effects, such as preferential attachment or unobserved heterogeneity, may need to be incorporated in future refinements to improve the model's explanatory power.
+However, certain challenges remain. The model struggles to capture extreme degree values, such as nodes with very high in-degrees or out-degrees, and rare triadic configurations, such as hierarchical (021U) and cyclical (021C) structures. These discrepancies suggest that additional structural or latent effects (e.g., specific terms for directed asymmetry and cycles) may need to be incorporated in future refinements to improve the model's explanatory power.
 
 ### Bibliography
 
