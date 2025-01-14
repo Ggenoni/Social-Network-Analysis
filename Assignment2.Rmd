@@ -130,23 +130,23 @@ Below, **Model 3** is discussed in detail and notable differences from **Models 
 
 ### Interpretation of Model 3 Estimates
 
-1.  **Edges** (Estimate: **-5.562** , **p \< 0.001**)
+1.  **Edges** (Estimate: **-5.562** , **p \< 0.001**):
 The strong negative coefficient indicates a low baseline propensity for any given pair to be "friends". In a friendship context, this is typical because only a minority of all possible ties are strong friendships.
-2.  **Mutual** (Estimate: **2.678**, **p \< 0.001**)
+2.  **Mutual** (Estimate: **2.678**, **p \< 0.001**):
 This significant positive effect suggests a strong tendency for reciprocity. In other words, if Person A calls Person B a friend, Person B is much more likely to call Person A a friend in return. This effect remains comparably large and significant across all models (it is also highly significant in Models 1 and 2).
-3.  **gwidegree** (Estimate: **1.641**, **not significant**)
-The a positive coefficient would suggest that popular individuals (i.e., those who receive many friendship ties) may have a slight tendency to attract additional ties. The effect, however, is not strong enough to reach statistical significance.
-4.  **gwodegree** (Estimate: **16.286**, **p \< 0.05**)
+3.  **gwidegree** (Estimate: **1.641**, **not significant**):
+The positive coefficient would suggest that popular individuals (i.e., those who receive many friendship ties) may have a slight tendency to attract additional ties. The effect, however, is not strong enough to reach statistical significance.
+4.  **gwodegree** (Estimate: **16.286**, **p \< 0.05**):
 This effect captures "activity" (i.e., actively initiating multiple ties, connected to a high out-degree). In Model 3 it is both larger and significant, implying that once we control for gender and other structural factors, some individuals indeed nominate friends at a higher‐than‐expected rate and create opportunities for others to become integrated into the friendship network.
-5.  **dgwesp.OTP** (Estimate: **1.853**, **p \< 0.001**)
+5.  **dgwesp.OTP** (Estimate: **1.853**, **p \< 0.001**):
 A positive and significant OTP parameter indicates that triadic closure is especially likely when an individual sends ties to two different people (i.e., "friends of my out‐friends tend to be my friends too"). This finding aligns with typical friendship processes where one's out‐contacts may be more likely to know each other, and it is very similar in magnitude to Model 1, implying that adding gender attributes does not substantially alter this triadic closure dynamic.
-6.  **dgwesp.ITP** (Estimate: **-0.637**, **p \< 0.001**)
+6.  **dgwesp.ITP** (Estimate: **-0.637**, **p \< 0.001**):
 The negative and significant ITP parameter implies that if two individuals both send ties to the same person, they are less likely than random to form a tie with each other. In friendship networks, this suggests that sharing a common recipient does not necessarily foster direct relationships between the two individuals. This pattern remains consistent from Model 1 through Model 3.
-7.  **nodeicov.Gender - male** (Estimate: **0.005**, **not significant**)
+7.  **nodeicov.Gender - male** (Estimate: **0.005**, **not significant**):
 This coefficient tests whether being male (coded as 0) makes one more likely to receive friend nominations. It is essentially zero and non‐significant, indicating that once we control for other network tendencies, male actors do not appear to receive significantly more (or fewer) friendship ties than female actors.
-8.  **nodeocov.Gender - female** (Estimate: **1.236**, **p \< 0.001**)
+8.  **nodeocov.Gender - female** (Estimate: **1.236**, **p \< 0.001**):
 This significant positive coefficient indicates that females (coded as 1) are more likely to send friendship ties than males. Notably, it is also significant in Model 2 at a similar magnitude (1.274). Thus, even after accounting for structural processes like reciprocity and triadic closure, women in this network remain more active in naming friends than men.
-9.  **nodematch.Gender** (Estimate: **-0.071, **not significant**)
+9.  **nodematch.Gender** (Estimate: **-0.071, **not significant**):
 This nonsignificant coefficient suggests that there is no strong homophily or heterophily by gender for close friendships---i.e., men do not show a strong tendency to befriend men, nor women to befriend women, relative to cross‐gender friendships, once other factors are considered. This is consistent across Models 2 and 3.
 
 Generally, **Model 3** suggests that both structural forces (reciprocity, triadic closure, activity patterns) and gender attributes shape who becomes friends in this network, though some anticipated effects (like gender‐based popularity or homophily) do not appear to be present.
@@ -157,7 +157,7 @@ As can be seen from the table, the only effects that vary in significance from M
 
 -   For **gwidegree**, the marginally significant positive coefficient in Model 1 (β=2.195,p=0.053) suggests that individuals who receive many ties (are "popular") have a slightly increased likelihood of forming additional friendships. When gender attributes are introduced in Model 3, the previously observed in-degree popularity effect is partly explained by other structural or gender-related factors. This suggests that "popularity" in terms of receiving ties is less crucial in explaining tie formation when accounting for sender gender and other structural dynamics.
 
--   For *gwodeg.fixed*, the non-significant coefficient in Model 1 (β=4.372,p=0.117) indicates that individuals who send many ties ("outgoing activity") do not significantly influence the overall network structure at this stage. However, when gender attributes are introduced in Model 3, the role of individuals who are more proactive in initiating friendships becomes more evident in shaping the network, especially when considering the sender's gender.
+-   For **gwidegree**, the non-significant coefficient in Model 1 (β=4.372,p=0.117) indicates that individuals who send many ties ("outgoing activity") do not significantly influence the overall network structure at this stage. However, when gender attributes are introduced in Model 3, the role of individuals who are more proactive in initiating friendships becomes more evident in shaping the network, especially when considering the sender's gender.
 
 
 ## Part 3: Goodness of Fit
